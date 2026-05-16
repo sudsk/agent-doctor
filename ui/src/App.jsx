@@ -256,4 +256,120 @@ function LogEntry({ entry }) {
   );
 }
 
-function ExperimentR
+function ExperimentResult({ result }) {
+  return (
+    <div style={styles.card}>
+      <div style={styles.cardHeader}>Experiment result</div>
+      <div style={styles.expGrid}>
+        <ScoreBox label="Current" score={result.current_score} />
+        <ScoreBox label="Candidate" score={result.candidate_score} winner={result.candidate_wins} />
+      </div>
+      <div style={styles.costTag}>
+        Token delta: {result.cost_delta_pct > 0 ? "+" : ""}{result.cost_delta_pct}%
+      </div>
+    </div>
+  );
+}
+
+function ScoreBox({ label, score, winner }) {
+  return (
+    <div style={{
+      ...styles.scoreBox,
+      border: winner ? "1.5px solid #1D9E75" : "1px solid var(--border)",
+    }}>
+      <div style={styles.scoreLabel}>{label}</div>
+      <div style={{
+        ...styles.scoreValue,
+        color: score >= 0.75 ? "#0F6E56" : "#A32D2D",
+      }}>
+        {score?.toFixed(3)}
+      </div>
+      {winner && <div style={styles.winnerTag}>Winner</div>}
+    </div>
+  );
+}
+
+const styles = {
+  root: {
+    fontFamily: "system-ui, sans-serif",
+    background: "#0f1117",
+    minHeight: "100vh",
+    color: "#e2e2e2",
+    display: "flex",
+    flexDirection: "column",
+  },
+  header: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "16px 24px",
+    borderBottom: "1px solid #2a2a3a",
+    background: "#13151f",
+  },
+  headerLeft: { display: "flex", alignItems: "center", gap: 12 },
+  logo: { fontSize: 28 },
+  title: { fontSize: 20, fontWeight: 600, color: "#fff" },
+  subtitle: { fontSize: 13, color: "#888", marginLeft: 4 },
+  badge: {
+    display: "flex", alignItems: "center", gap: 8,
+    padding: "6px 14px", borderRadius: 20,
+    fontSize: 13, fontWeight: 500, color: "#fff",
+  },
+  pulse: {
+    width: 8, height: 8, borderRadius: "50%",
+    background: "rgba(255,255,255,0.7)",
+    animation: "none",
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "280px 1fr 320px",
+    gap: 16,
+    padding: 16,
+    flex: 1,
+    minHeight: 0,
+  },
+  leftCol:   { display: "flex", flexDirection: "column", gap: 16 },
+  centreCol: { display: "flex", flexDirection: "column", gap: 16 },
+  rightCol:  { display: "flex", flexDirection: "column", gap: 16 },
+  card: {
+    background: "#1a1d2e",
+    border: "1px solid #2a2a3a",
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  cardHeader: {
+    padding: "10px 14px",
+    fontSize: 12,
+    fontWeight: 600,
+    color: "#888",
+    textTransform: "uppercase",
+    letterSpacing: "0.08em",
+    borderBottom: "1px solid #2a2a3a",
+  },
+  logScroll: {
+    height: 320,
+    overflowY: "auto",
+    padding: "10px 14px",
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
+  },
+  logEmpty: { color: "#555", fontSize: 13, fontStyle: "italic" },
+  logEntry: { display: "flex", gap: 10, fontSize: 13, lineHeight: 1.5 },
+  logTs:    { color: "#555", minWidth: 60, fontSize: 11 },
+  expGrid:  { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: 14 },
+  scoreBox: {
+    borderRadius: 8, padding: "12px 10px",
+    textAlign: "center", background: "#13151f",
+  },
+  scoreLabel: { fontSize: 11, color: "#888", marginBottom: 6 },
+  scoreValue: { fontSize: 24, fontWeight: 700 },
+  winnerTag: {
+    fontSize: 10, color: "#1D9E75", fontWeight: 600,
+    marginTop: 4, textTransform: "uppercase",
+  },
+  costTag: {
+    padding: "6px 14px 12px",
+    fontSize: 12, color: "#888", textAlign: "center",
+  },
+};
