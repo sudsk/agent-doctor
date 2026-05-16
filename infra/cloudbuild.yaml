@@ -1,0 +1,54 @@
+steps:
+  # Build and push tool server
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - gcr.io/$PROJECT_ID/agent-doctor-tool-server:$COMMIT_SHA
+      - ./tool-server
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - gcr.io/$PROJECT_ID/agent-doctor-tool-server:$COMMIT_SHA
+
+  # Build and push UI
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - gcr.io/$PROJECT_ID/agent-doctor-ui:$COMMIT_SHA
+      - ./ui
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - gcr.io/$PROJECT_ID/agent-doctor-ui:$COMMIT_SHA
+
+  # Deploy tool server to Cloud Run
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - run
+      - deploy
+      - agent-doctor-tool-server
+      - --image=gcr.io/$PROJECT_ID/agent-doctor-tool-server:$COMMIT_SHA
+      - --region=europe-west2
+      - --platform=managed
+      - --allow-unauthenticated
+
+  # Deploy UI to Cloud Run
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - run
+      - deploy
+      - agent-doctor-ui
+      - --image=gcr.io/$PROJECT_ID/agent-doctor-ui:$COMMIT_SHA
+      - --region=europe-west2
+      - --platform=managed
+      - --allow-unauthenticated
+
+substitutions:
+  _REGION: europe-west2
+
+options:
+  logging: CLOUD_LOGGING_ONLY
