@@ -56,4 +56,27 @@ fi
 
 # ── Step 5: Open UI ───────────────────────────────────────────
 log "Step 5/5 — Opening Agent Doctor UI..."
-UI
+UI_URL=${AGENT_DOCTOR_UI_URL:-"http://localhost:3000"}
+echo ""
+echo "═══════════════════════════════════════════════════════"
+echo "  Agent Doctor is running."
+echo "  UI:      $UI_URL"
+echo "  Phoenix: https://app.phoenix.arize.com"
+echo "  Project: agent-doctor-demo"
+echo ""
+echo "  Demo arc:"
+echo "  1. UI shows regression detected (red traces)"
+echo "  2. Agent diagnoses: bad prompt version"  
+echo "  3. Prompt diff appears in right panel"
+echo "  4. Click 'Validate candidate' — experiment runs"
+echo "  5. Candidate wins — click 'Approve promotion'"
+echo "  6. Prompt promoted in Phoenix, annotations cleaned"
+echo "  7. Status returns to 'Monitoring — healthy'"
+echo "═══════════════════════════════════════════════════════"
+
+# Auto-open browser if running locally
+if command -v open &> /dev/null; then
+  open "$UI_URL"
+elif command -v xdg-open &> /dev/null; then
+  xdg-open "$UI_URL"
+fi
