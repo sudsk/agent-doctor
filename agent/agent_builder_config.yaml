@@ -1,0 +1,48 @@
+displayName: Agent Doctor
+description: >
+  Autonomous LLM quality agent. Monitors Arize Phoenix traces, detects
+  quality and cost regressions, diagnoses root cause, proposes and validates
+  prompt fixes via Phoenix Experiments, promotes winning prompts.
+  Built for Google Cloud Rapid Agent Hackathon — Arize track.
+
+model: gemini-3.1-pro-preview-customtools
+
+generationConfig:
+  temperature: 0.2
+  maxOutputTokens: 8192
+
+groundingConfig:
+  disableAttribution: false
+
+extensions:
+  # Arize Phoenix MCP server
+  - type: mcp
+    displayName: Phoenix MCP
+    mcpServer:
+      uri: https://app.phoenix.arize.com/mcp
+      headers:
+        api_key: ${PHOENIX_API_KEY}
+
+  # GCP Cloud Logging MCP — dual observability signal
+  - type: mcp
+    displayName: Cloud Logging MCP
+    mcpServer:
+      uri: https://logging.googleapis.com/mcp/v1
+      authType: GOOGLE_SERVICE_ACCOUNT
+
+  # Custom tool server (Cloud Run)
+  - type: openapi
+    displayName: Agent Doctor Tools
+    openApiSpec:
+      uri: ${TOOL_SERVER_URL}/openapi-spec
+
+systemInstruction:
+  partText: agent/system_prompt.txt
+
+safetySettings:
+  - category: HARM_CATEGORY_DANGEROUS_CONTENT
+    threshold: BLOCK_ONLY_HIGH
+
+modelArmorConfig:
+  enabled: true
+  promptInjectionProtection: BLOCK_LOW_AND_ABOVE
