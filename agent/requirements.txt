@@ -1,0 +1,4 @@
+google-cloud-aiplatform[adk,reasoning_engine]==1.70.0
+vertexai==1.70.0
+openinference-instrumentation-mcp==0.1.0
+python-dotenv==1.0.0
