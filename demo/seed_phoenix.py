@@ -29,8 +29,8 @@ def seed():
     prompt = client.prompts.create(
         name="support-summariser",
         template="You are a helpful summariser. Summarise the following customer support ticket in exactly 2 sentences. Be concise and factual. Do not invent information.\n\nTicket: {{ticket}}",
-        model_name="claude-sonnet-4-20250514",
-        model_provider="ANTHROPIC",
+        model_name="gemini-3-flash",
+        model_provider="GOOGLE",
         description="v1 — baseline concise summariser",
     )
     print(f"Created prompt: {prompt.id}")
