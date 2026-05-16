@@ -1,14 +1,17 @@
 import os
-import anthropic
+import vertexai
+from vertexai.generative_models import GenerativeModel, Content, Part
 from instrument import setup_tracing
-from openinference.instrumentation.anthropic import AnthropicInstrumentor
+from openinference.instrumentation.vertexai import VertexAIInstrumentor
 
+vertexai.init(
+    project=os.environ["GCP_PROJECT_ID"],
+    location=os.environ["VERTEX_AI_LOCATION"],
+)
 setup_tracing()
-AnthropicInstrumentor().instrument()
+VertexAIInstrumentor().instrument()
 
-client = anthropic.Anthropic()
-
-PROMPT_V1 = """You are a helpful summariser. 
+PROMPT_V1 = """You are a helpful summariser.
 Summarise the following customer support ticket in exactly 2 sentences.
 Be concise and factual. Do not invent information."""
 
@@ -18,13 +21,12 @@ Feel free to elaborate with helpful suggestions and related information the cust
 
 def summarise(ticket: str, use_bad_prompt: bool = False) -> str:
     system = PROMPT_BAD if use_bad_prompt else PROMPT_V1
-    message = client.messages.create(
-        model="claude-sonnet-4-20250514",
-        max_tokens=300,
-        system=system,
-        messages=[{"role": "user", "content": ticket}]
+    model = GenerativeModel(
+        model_name="gemini-3-flash",
+        system_instruction=system,
     )
-    return message.content[0].text
+    response = model.generate_content(ticket)
+    return response.text
 
 if __name__ == "__main__":
     tickets = [
