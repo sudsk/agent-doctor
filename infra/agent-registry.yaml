@@ -1,0 +1,27 @@
+# Registers Phoenix MCP in GCP Agent Registry
+# gcloud agent-registry servers create --config=infra/agent-registry.yaml
+
+apiVersion: agentregistry.googleapis.com/v1
+kind: McpServer
+metadata:
+  name: phoenix-mcp
+  displayName: Arize Phoenix MCP
+  description: >
+    LLM observability context platform — traces, spans, prompts,
+    experiments, datasets, sessions for Agent Doctor.
+  labels:
+    team: agent-doctor
+    hackathon: google-cloud-rapid-agent
+    track: arize
+spec:
+  uri: https://app.phoenix.arize.com/mcp
+  authType: API_KEY
+  apiKeyHeader: api_key
+  capabilities:
+    - traces
+    - spans
+    - prompts
+    - experiments
+    - datasets
+    - sessions
+    - annotations
