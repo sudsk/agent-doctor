@@ -1,0 +1,40 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: agent-doctor-tool-server
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/execution-environment: gen2
+        autoscaling.knative.dev/minScale: "1"
+        autoscaling.knative.dev/maxScale: "10"
+    spec:
+      serviceAccountName: agent-doctor-sa@${GCP_PROJECT_ID}.iam.gserviceaccount.com
+      containers:
+        - image: gcr.io/${GCP_PROJECT_ID}/agent-doctor-tool-server:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PHOENIX_BASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: phoenix-base-url
+                  key: latest
+            - name: PHOENIX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: phoenix-api-key
+                  key: latest
+            - name: GCP_PROJECT_ID
+              value: ${GCP_PROJECT_ID}
+            - name: VERTEX_AI_LOCATION
+              value: europe-west2
+            - name: JUDGE_MODEL
+              value: gemini-3-flash
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
